@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dinesh.LibraryManagementSystem.model.Genre;
+import com.dinesh.LibraryManagementSystem.payload.dto.GenreDTO;
 import com.dinesh.LibraryManagementSystem.service.GenreService;
 
 @RestController
@@ -22,8 +23,9 @@ public class GenreController {
 	
 	@PostMapping("/create")
 	public ResponseEntity<Genre> addGenre(@RequestBody Genre genre) {
-		Genre createdGenre = genreService.createGenre(genre);
-		return ResponseEntity.ok(createdGenre);
+//		GenreDTO createdGenre = genreService.createGenre(genre);
+//		return ResponseEntity.ok(createdGenre);
+		return null;
 	}
 	
 

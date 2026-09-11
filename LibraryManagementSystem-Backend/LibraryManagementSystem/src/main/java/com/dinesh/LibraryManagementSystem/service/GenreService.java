@@ -1,9 +1,9 @@
 package com.dinesh.LibraryManagementSystem.service;
 
-import com.dinesh.LibraryManagementSystem.model.Genre;
+import com.dinesh.LibraryManagementSystem.payload.dto.GenreDTO;
 
 public interface GenreService {
 	
-	Genre createGenre(Genre genre);
+	GenreDTO createGenre(GenreDTO genre);
 
 }

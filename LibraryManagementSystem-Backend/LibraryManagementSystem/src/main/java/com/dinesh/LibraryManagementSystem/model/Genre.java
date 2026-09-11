@@ -23,7 +23,7 @@ import jakarta.validation.constraints.Size;
 public class Genre {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	private Long id;
 
 	@NotBlank(message = "Genra code is mandetory")
 	private String code;
@@ -41,7 +41,7 @@ public class Genre {
 	private Boolean active = true;
 
 	@ManyToOne
-	private Genre privateGenre;
+	private Genre parentGenre;
 
 	@OneToMany
 	private List<Genre> subGenres = new ArrayList<Genre>();
@@ -55,11 +55,11 @@ public class Genre {
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -103,12 +103,13 @@ public class Genre {
 		this.active = active;
 	}
 
-	public Genre getPrivateGenre() {
-		return privateGenre;
+
+	public Genre getParentGenre() {
+		return parentGenre;
 	}
 
-	public void setPrivateGenre(Genre privateGenre) {
-		this.privateGenre = privateGenre;
+	public void setParentGenre(Genre parentGenre) {
+		this.parentGenre = parentGenre;
 	}
 
 	public List<Genre> getSubGenres() {
@@ -139,5 +140,27 @@ public class Genre {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+	public Genre(Long id, @NotBlank(message = "Genra code is mandetory") String code,
+			@NotBlank(message = "Genra name is mandetory") String name,
+			@Size(max = 500, message = "Description must not exceed 500 character") String description,
+			@Min(value = 0, message = "Display order cannot be negative") Integer displayOrder, Boolean active,
+			Genre parentGenre, List<Genre> subGenres, LocalDateTime createdAt, LocalDateTime updatedAt) {
+		super();
+		this.id = id;
+		this.code = code;
+		this.name = name;
+		this.description = description;
+		this.displayOrder = displayOrder;
+		this.active = active;
+		this.parentGenre = parentGenre;
+		this.subGenres = subGenres;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+	}
+
+
+	
+	
 
 }

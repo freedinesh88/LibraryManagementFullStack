@@ -1,0 +1,143 @@
+package com.dinesh.LibraryManagementSystem.model;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+@Entity
+public class Genre {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id;
+
+	@NotBlank(message = "Genra code is mandetory")
+	private String code;
+
+	@NotBlank(message = "Genra name is mandetory")
+	private String name;
+
+	@Size(max = 500, message = "Description must not exceed 500 character")
+	private String description;
+
+	@Min(value = 0, message = "Display order cannot be negative")
+	private Integer displayOrder = 0;
+
+	@Column(nullable = false)
+	private Boolean active = true;
+
+	@ManyToOne
+	private Genre privateGenre;
+
+	@OneToMany
+	private List<Genre> subGenres = new ArrayList<Genre>();
+
+//	@OneToMany(mappedBy = "genre" , cascade = CascadeType.PERSIST)
+//	private List<Book> books = new ArrayList<Book>();
+
+	@CreationTimestamp
+	private LocalDateTime createdAt;
+
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Integer getDisplayOrder() {
+		return displayOrder;
+	}
+
+	public void setDisplayOrder(Integer displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public Genre getPrivateGenre() {
+		return privateGenre;
+	}
+
+	public void setPrivateGenre(Genre privateGenre) {
+		this.privateGenre = privateGenre;
+	}
+
+	public List<Genre> getSubGenres() {
+		return subGenres;
+	}
+
+	public void setSubGenres(List<Genre> subGenres) {
+		this.subGenres = subGenres;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public Genre() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+}

@@ -2,12 +2,21 @@ package com.dinesh.LibraryManagementSystem.mapper;
 
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import com.dinesh.LibraryManagementSystem.model.Genre;
 import com.dinesh.LibraryManagementSystem.payload.dto.GenreDTO;
+import com.dinesh.LibraryManagementSystem.repository.GenreRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
 public class GenreMapper {
 
-	public static GenreDTO toDTO(Genre savedGenre) {
+	private final GenreRepository genreRepository;
+
+	public GenreDTO toDTO(Genre savedGenre) {
 		if (savedGenre == null) {
 			return null;
 		}
@@ -26,4 +35,31 @@ public class GenreMapper {
 		return dto;
 	}
 
+	public Genre toEntity(GenreDTO genreDTO) {
+		if (genreDTO == null)
+			return null;
+		Genre genre = Genre.builder().code(genreDTO.getCode()).name(genreDTO.getName())
+				.description(genreDTO.getDescription()).displayOrder(genreDTO.getDisplayOrder()).active(true).build();
+		if (genreDTO.getParentGenreId() != null) {
+			genreRepository.findById(genreDTO.getParentGenreId()).ifPresent(genre::setParentGenre);
+		}
+		return genre;
+	}
+
+	public void updateEntityFromDTO(GenreDTO dto, Genre existingGenre) {
+		if (dto == null || existingGenre == null) {
+			return;
+		}
+		existingGenre.setCode(dto.getCode());
+		existingGenre.setName(dto.getName());
+		existingGenre.setDescription(dto.getDescription());
+		existingGenre.setDisplayOrder(dto.getDisplayOrder() != null ? dto.getDisplayOrder() : 0);
+		if (dto.getActive() != null) {
+			existingGenre.setActive(dto.getActive());
+		}
+		if (dto.getParentGenreId() != null) {
+			genreRepository.findById(dto.getParentGenreId()).ifPresent(existingGenre::setParentGenre);
+		}
+
+	}
 }

@@ -28,8 +28,8 @@ public interface GenreService {
 	
 //	Page<GenreDTO> searchGenres(String searchTerm, Pageable pageable);
 	
-	Long getTotalActiveGenres();
+	long getTotalActiveGenres();
 	
-	Long getBookCountByGenre(Long genreId);
+	long getBookCountByGenre(Long genreId);
 
 }

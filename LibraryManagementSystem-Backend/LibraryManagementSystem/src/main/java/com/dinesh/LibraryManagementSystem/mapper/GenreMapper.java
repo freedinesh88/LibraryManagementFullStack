@@ -1,5 +1,6 @@
 package com.dinesh.LibraryManagementSystem.mapper;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
@@ -61,5 +62,9 @@ public class GenreMapper {
 			genreRepository.findById(dto.getParentGenreId()).ifPresent(existingGenre::setParentGenre);
 		}
 
+	}
+
+	public List<GenreDTO> toDTOList(List<Genre> genreList) {
+		return genreList.stream().map(genre -> toDTO(genre)).collect(Collectors.toList());
 	}
 }

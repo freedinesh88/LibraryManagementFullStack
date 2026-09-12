@@ -67,26 +67,27 @@ public class GenreServiceImpl implements GenreService {
 
 	@Override
 	public List<GenreDTO> getAllActiveGenreWithSubGenres() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Genre> topLevelGenres = genreRepository.findByParentGenreIsNullAndActiveTrueOrderByDisplayOrderAsc();
+
+		return genreMapper.toDTOList(topLevelGenres);
 	}
 
 	@Override
 	public List<GenreDTO> getTopLevelGenres() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Genre> topLevelGenres = genreRepository.findByParentGenreIsNullAndActiveTrueOrderByDisplayOrderAsc();
+
+		return genreMapper.toDTOList(topLevelGenres);
 	}
 
 	@Override
-	public Long getTotalActiveGenres() {
-		// TODO Auto-generated method stub
-		return null;
+	public long getTotalActiveGenres() {
+		return genreRepository.countByActiveTrue();
 	}
 
 	@Override
-	public Long getBookCountByGenre(Long genreId) {
+	public long getBookCountByGenre(Long genreId) {
 		// TODO Auto-generated method stub
-		return null;
+		return 0;
 	}
 
 }

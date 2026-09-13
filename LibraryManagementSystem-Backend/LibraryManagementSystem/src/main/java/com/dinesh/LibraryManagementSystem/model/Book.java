@@ -1,6 +1,7 @@
 package com.dinesh.LibraryManagementSystem.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class Book {
 
 	private String publisher;
 
-	private LocalDateTime publicationDate;
+	private LocalDate publicationDate;
 
 	private String language;
 

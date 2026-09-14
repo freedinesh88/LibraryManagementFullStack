@@ -14,7 +14,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
 	Optional<Book> findByIsbn(String isbn);
 
-	boolean existByIsbn(String isbn);
+	boolean existsByIsbn(String isbn);
 
 	@Query("""
 			SELECT b FROM Book b
@@ -31,7 +31,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 			    b.active = true
 			""")
 	Page<Book> searchBookWithFilters(@Param("searchTerm") String searchTerm, @Param("genreId") Long genreId,
-			@Param("availableOnly") boolean availableOnly, Pageable pageable);
+			@Param("availableOnly") Boolean availableOnly, Pageable pageable);
 
 	long countByActiveTrue();
 

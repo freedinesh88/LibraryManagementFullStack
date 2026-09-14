@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dinesh.LibraryManagementSystem.exception.BookException;
@@ -92,6 +93,32 @@ public class BookController {
 
 		return ResponseEntity.ok(new ApiResponse("Book deleted successfully", true));
 
+	}
+	
+	@GetMapping
+	public ResponseEntity<PageResponse<BookDTO>> searchBooks(
+	        @RequestParam(required = false) String searchTerm,
+	        @RequestParam(required = false) Long genreId,
+	        @RequestParam(required = false,defaultValue = "false") Boolean availableOnly,
+	        @RequestParam(defaultValue = "0") Integer page,
+	        @RequestParam(defaultValue = "20") Integer size,
+	        @RequestParam(defaultValue = "createdAt") String sortBy,
+	        @RequestParam(defaultValue = "DESC") String sortDirections) {
+
+	    BookSearchRequest searchRequest = new BookSearchRequest();
+
+	    searchRequest.setSearchTerm(searchTerm);
+	    searchRequest.setGenreId(genreId);
+	    searchRequest.setAvailableOnly(availableOnly);
+	    searchRequest.setPage(page);
+	    searchRequest.setSize(size);
+	    searchRequest.setSortBy(sortBy);
+	    searchRequest.setSortDirections(sortDirections);
+
+	    PageResponse<BookDTO> response =
+	            bookService.searchBooksWithFilters(searchRequest);
+
+	    return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/search")

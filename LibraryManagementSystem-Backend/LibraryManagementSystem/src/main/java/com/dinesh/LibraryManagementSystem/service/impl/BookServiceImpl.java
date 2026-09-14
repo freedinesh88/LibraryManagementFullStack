@@ -29,7 +29,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public BookDTO createBook(BookDTO bookDTO) throws BookException {
-		if (bookRepository.existByIsbn(bookDTO.getIsbn())) {
+		if (bookRepository.existsByIsbn(bookDTO.getIsbn())) {
 			throw new BookException("Book with isbn " + bookDTO.getIsbn() + " already exist");
 		}
 		Book book = bookMapper.toEntity(bookDTO);

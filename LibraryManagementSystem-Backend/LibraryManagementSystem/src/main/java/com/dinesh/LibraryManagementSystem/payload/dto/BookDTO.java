@@ -72,8 +72,8 @@ public class BookDTO {
 	@NotNull(message = "Available copies is mandeotry")
 	private Integer availableCopies;
 
-	@DecimalMin(value = "0.0", inclusive = true, message = "price cannot be negative")
-	@Digits(integer = 0, fraction = 2, message = "Price must have at least 8 integer digits and 2")
+	@DecimalMin(value = "0.0", inclusive = true, message = "Price cannot be negative")
+	@Digits(integer = 8, fraction = 2, message = "Price must have at most 8 integer digits and 2 decimal places")
 	private BigDecimal price;
 
 	@Size(max = 500, message = "Image URL must not exceed 500 characters")

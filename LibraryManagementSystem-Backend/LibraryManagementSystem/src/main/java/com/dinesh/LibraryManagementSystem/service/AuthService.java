@@ -10,8 +10,8 @@ public interface AuthService {
 
 	AuthResponse signup(UserDTO req) throws UserException;
 
-	void createPasswordResetToken(String email);
-	void resetPassword(String token, String newPassword);
+	void createPasswordResetToken(String email) throws UserException;
+	void resetPassword(String token, String newPassword) throws UserException;
 	
 
 }

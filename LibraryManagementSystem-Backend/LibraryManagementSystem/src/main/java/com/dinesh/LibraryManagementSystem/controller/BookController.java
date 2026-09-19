@@ -33,12 +33,6 @@ import lombok.RequiredArgsConstructor;
 public class BookController {
 
 	private final BookService bookService;
-	@PostMapping
-	private ResponseEntity<BookDTO> createBook(@Valid @RequestBody BookDTO bookDTO) throws BookException {
-		BookDTO createdBook = bookService.createBook(bookDTO);
-
-		return ResponseEntity.status(HttpStatus.CREATED).body(createdBook);
-	}
 
 	@PostMapping("/bulk")
 	public ResponseEntity<List<BookDTO>> createBookBulks(@Valid @RequestBody List<BookDTO> bookDTOs)

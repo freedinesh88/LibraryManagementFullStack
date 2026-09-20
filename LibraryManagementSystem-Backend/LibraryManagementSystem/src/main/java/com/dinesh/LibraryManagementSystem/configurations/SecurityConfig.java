@@ -25,16 +25,16 @@ public class SecurityConfig {
 
 		return http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-				.authorizeHttpRequests(authorize -> authorize
+				.authorizeHttpRequests(
+						authorize -> authorize.requestMatchers("/api/subscription-plans/admin/**").hasRole("ADMIN")
+								// Admin APIs - MUST come before /api/**
+								.requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-						// Admin APIs - MUST come before /api/**
-						.requestMatchers("/api/admin/**").hasRole("ADMIN")
+								// All other API endpoints require login
+								.requestMatchers("/api/**").authenticated()
 
-						// All other API endpoints require login
-						.requestMatchers("/api/**").authenticated()
-
-						// Auth endpoints and everything else
-						.anyRequest().permitAll())
+								// Auth endpoints and everything else
+								.anyRequest().permitAll())
 
 				.addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)
 

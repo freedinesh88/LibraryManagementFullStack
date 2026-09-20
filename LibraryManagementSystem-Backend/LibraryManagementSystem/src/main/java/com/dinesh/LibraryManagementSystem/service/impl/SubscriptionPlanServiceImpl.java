@@ -1,15 +1,19 @@
 package com.dinesh.LibraryManagementSystem.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.dinesh.LibraryManagementSystem.exception.SubscriptionPlanException;
+import com.dinesh.LibraryManagementSystem.exception.UserException;
 import com.dinesh.LibraryManagementSystem.mapper.SubscriptionPlanMapper;
 import com.dinesh.LibraryManagementSystem.model.SubscriptionPlan;
+import com.dinesh.LibraryManagementSystem.model.User;
 import com.dinesh.LibraryManagementSystem.payload.dto.SubscriptionPlanDTO;
 import com.dinesh.LibraryManagementSystem.repository.SubscriptionPlanRepository;
 import com.dinesh.LibraryManagementSystem.service.SubscriptionPlanService;
+import com.dinesh.LibraryManagementSystem.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,96 +21,73 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
 
-    private final SubscriptionPlanRepository subscriptionPlanRepository;
-    private final SubscriptionPlanMapper subscriptionPlanMapper;
+	private final SubscriptionPlanRepository subscriptionPlanRepository;
+	private final SubscriptionPlanMapper subscriptionPlanMapper;
+	private final UserService userService;
 
-    @Override
-    public SubscriptionPlanDTO createSubscriptionPlan(
-            SubscriptionPlanDTO planDTO) {
+	@Override
+	public SubscriptionPlanDTO createSubscriptionPlan(SubscriptionPlanDTO planDTO) throws UserException {
 
-        // Check duplicate plan code
-        if (subscriptionPlanRepository.existsByPlanCode(planDTO.getPlanCode())) {
-            throw new SubscriptionPlanException(
-                    "Subscription plan with code "
-                    + planDTO.getPlanCode()
-                    + " already exists");
-        }
+		// Check duplicate plan code
+		if (subscriptionPlanRepository.existsByPlanCode(planDTO.getPlanCode())) {
 
-        SubscriptionPlan plan =
-                subscriptionPlanMapper.toEntity(planDTO);
+			throw new SubscriptionPlanException(
+					"Subscription plan with code " + planDTO.getPlanCode() + " already exists");
+		}
 
-        SubscriptionPlan savedPlan =
-                subscriptionPlanRepository.save(plan);
+		SubscriptionPlan plan = subscriptionPlanMapper.toEntity(planDTO);
 
-        return subscriptionPlanMapper.toDTO(savedPlan);
-    }
+		User currentUser = userService.getCurrentUser();
 
-    @Override
-    public SubscriptionPlanDTO updateSubscriptionPlan(
-            Long planId,
-            SubscriptionPlanDTO planDTO) {
+		plan.setCreatedBy(currentUser.getFullName());
+		plan.setUpdatedBy(currentUser.getFullName());
 
-        SubscriptionPlan existingPlan =
-                subscriptionPlanRepository.findById(planId)
-                .orElseThrow(() ->
-                        new SubscriptionPlanException(
-                                "Subscription plan not found with id: "
-                                + planId));
+		SubscriptionPlan savedPlan = subscriptionPlanRepository.save(plan);
 
-        // Check whether another plan already uses this plan code
-        if (!existingPlan.getPlanCode().equals(planDTO.getPlanCode())
-                && subscriptionPlanRepository
-                        .existsByPlanCode(planDTO.getPlanCode())) {
+		return subscriptionPlanMapper.toDTO(savedPlan);
+	}
 
-            throw new SubscriptionPlanException(
-                    "Subscription plan with code "
-                    + planDTO.getPlanCode()
-                    + " already exists");
-        }
+	@Override
+	public SubscriptionPlanDTO updateSubscriptionPlan(Long planId, SubscriptionPlanDTO planDTO) throws UserException {
 
-        existingPlan.setPlanCode(planDTO.getPlanCode());
-        existingPlan.setPlanName(planDTO.getPlanName());
-        existingPlan.setDescription(planDTO.getDescription());
-        existingPlan.setDurationDays(planDTO.getDurationDays());
-        existingPlan.setPrice(planDTO.getPrice());
-        existingPlan.setCurrencyCode(planDTO.getCurrency());
-        existingPlan.setMaxBookAllowed(planDTO.getMaxBookAllowed());
-        existingPlan.setMaxDaysPerBook(planDTO.getMaxDaysPerBook());
-        existingPlan.setDisplayOrder(planDTO.getDisplayOrder());
-        existingPlan.setIsActive(planDTO.getIsActive());
-        existingPlan.setIsFeatured(planDTO.getIsFeatured());
-        existingPlan.setBadgeText(planDTO.getBadgeText());
-        existingPlan.setAdminNotes(planDTO.getAdminNotes());
-        existingPlan.setUpdatedBy(planDTO.getUpdatedBy());
+		SubscriptionPlan existingPlan = subscriptionPlanRepository.findById(planId)
+				.orElseThrow(() -> new SubscriptionPlanException("Subscription plan not found with id: " + planId));
 
-        SubscriptionPlan updatedPlan =
-                subscriptionPlanRepository.save(existingPlan);
+		// Check duplicate plan code only if a new code was supplied
+		if (planDTO.getPlanCode() != null && !existingPlan.getPlanCode().equals(planDTO.getPlanCode())
+				&& subscriptionPlanRepository.existsByPlanCode(planDTO.getPlanCode())) {
 
-        return subscriptionPlanMapper.toDTO(updatedPlan);
-    }
+			throw new SubscriptionPlanException(
+					"Subscription plan with code " + planDTO.getPlanCode() + " already exists");
+		}
 
-    @Override
-    public void deleteSubscriptionPlan(Long planId) {
+		// Update only non-null fields
+		subscriptionPlanMapper.updateEntity(existingPlan, planDTO);
 
-        SubscriptionPlan plan =
-                subscriptionPlanRepository.findById(planId)
-                .orElseThrow(() ->
-                        new SubscriptionPlanException(
-                                "Subscription plan not found with id: "
-                                + planId));
+		User currentUser = userService.getCurrentUser();
 
-        subscriptionPlanRepository.delete(plan);
-    }
+		// Do NOT change createdBy
+		existingPlan.setUpdatedBy(currentUser.getFullName());
 
-    @Override
-    public List<SubscriptionPlanDTO> getAllSubscriptionPlans() {
+		SubscriptionPlan updatedPlan = subscriptionPlanRepository.save(existingPlan);
 
-        List<SubscriptionPlan> plans =
-                subscriptionPlanRepository
-                        .findAllByOrderByDisplayOrderAsc();
+		return subscriptionPlanMapper.toDTO(updatedPlan);
+	}
 
-        return plans.stream()
-                .map(subscriptionPlanMapper::toDTO)
-                .toList();
-    }
+	@Override
+	public void deleteSubscriptionPlan(Long planId) {
+
+		SubscriptionPlan plan = subscriptionPlanRepository.findById(planId)
+				.orElseThrow(() -> new SubscriptionPlanException("Subscription plan not found with id: " + planId));
+
+		subscriptionPlanRepository.delete(plan);
+	}
+
+	@Override
+	public List<SubscriptionPlanDTO> getAllSubscriptionPlans() {
+
+		List<SubscriptionPlan> plans = subscriptionPlanRepository.findAll();
+
+		return plans.stream().map(subscriptionPlanMapper::toDTO).collect(Collectors.toList());
+	}
 }

@@ -1,7 +1,9 @@
 package com.dinesh.LibraryManagementSystem.service.impl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,10 +43,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 				.orElseThrow(() -> new Exception("Plan not found with id: " + subscriptionDTO.getPlanId()));
 
 		// Create subscription
-		Subscription subscription = subscriptionMapper.toEntity(subscriptionDTO);
+		Subscription subscription = subscriptionMapper.toEntity(subscriptionDTO, plan, user);
 
 		// Initialize plan details and calculate end date
 		subscription.initializeFromPlan();
+		subscription.setIsActive(false);
 
 		// Save
 		Subscription savedSubscription = subscriptionRepository.save(subscription);
@@ -69,21 +72,66 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	}
 
 	@Override
-	public SubscriptionDTO cancelSubscription(Long subscriptionId, String reason) {
-		// TODO Auto-generated method stub
-		return null;
+	public SubscriptionDTO cancelSubscription(Long subscriptionId, String reason) throws Exception {
+
+		Subscription subscription = subscriptionRepository.findById(subscriptionId)
+				.orElseThrow(() -> new SubscriptionException("Subscription not found with id: " + subscriptionId));
+
+		// Subscription must be active before cancellation
+		if (!Boolean.TRUE.equals(subscription.getIsActive())) {
+			throw new SubscriptionException("Subscription is already inactive");
+		}
+
+		// Cancel subscription
+		subscription.setIsActive(false);
+		subscription.setCancelledAt(LocalDateTime.now());
+
+		subscription.setCancellationReason(reason != null && !reason.trim().isEmpty() ? reason : "Cancelled by user");
+
+		// Save
+		subscription = subscriptionRepository.save(subscription);
+
+		// Return DTO
+		return subscriptionMapper.toDTO(subscription);
 	}
 
 	@Override
-	public SubscriptionDTO activeSubscription(Long subscriptionId, Long paymentId) {
-		// TODO Auto-generated method stub
-		return null;
+	public SubscriptionDTO activeSubscription(Long subscriptionId, Long paymentId) throws SubscriptionException {
+
+		Subscription subscription = subscriptionRepository.findById(subscriptionId)
+				.orElseThrow(() -> new SubscriptionException("Subscription not found with id: " + subscriptionId));
+
+//		if (paymentId == null) {
+//			throw new SubscriptionException("Payment ID is required");
+//		}
+
+		if (Boolean.TRUE.equals(subscription.getIsActive())) {
+			throw new SubscriptionException("Subscription is already active");
+		}
+
+		// Activate subscription
+		subscription.setIsActive(true);
+
+		Subscription savedSubscription = subscriptionRepository.save(subscription);
+
+		return subscriptionMapper.toDTO(savedSubscription);
 	}
 
 	@Override
 	public List<SubscriptionDTO> getAllSubscription(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Subscription> subscriptions = subscriptionRepository.findAll();
+		return subscriptionMapper.toDTOList(subscriptions);
+	}
+
+	@Override
+	public void deactivateExpiredSubscriptions() throws Exception {
+		List<Subscription> expiredSubscriptions = subscriptionRepository
+				.findExpiredActiveSubscriptions(LocalDate.now());
+		for (Subscription subscription : expiredSubscriptions) {
+			subscription.setIsActive(false);
+			subscriptionRepository.save(subscription);
+		}
+
 	}
 
 }

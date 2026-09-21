@@ -29,6 +29,7 @@ public class SecurityConfig {
 						authorize -> authorize.requestMatchers("/api/subscription-plans/admin/**").hasRole("ADMIN")
 								// Admin APIs - MUST come before /api/**
 								.requestMatchers("/api/admin/**").hasRole("ADMIN")
+								.requestMatchers("/api/subscriptions/admin/**").hasRole("ADMIN")
 
 								// All other API endpoints require login
 								.requestMatchers("/api/**").authenticated()

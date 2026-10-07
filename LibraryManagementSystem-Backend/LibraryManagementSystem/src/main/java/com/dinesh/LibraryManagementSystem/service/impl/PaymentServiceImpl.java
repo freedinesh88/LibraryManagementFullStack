@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.dinesh.LibraryManagementSystem.domain.PaymentGateway;
 import com.dinesh.LibraryManagementSystem.domain.PaymentStatus;
+import com.dinesh.LibraryManagementSystem.event.publisher.PaymentEventPublisher;
 import com.dinesh.LibraryManagementSystem.gateway.RazorpayService;
 import com.dinesh.LibraryManagementSystem.mapper.PaymentMapper;
 import com.dinesh.LibraryManagementSystem.model.Payment;
@@ -37,6 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
 	private final PaymentRepository paymentRepository;
 	private final RazorpayService razorpayService;
 	private final PaymentMapper paymentMapper;
+	private final PaymentEventPublisher paymentEventPublisher;
 
 	@Override
 	public PaymentInitiateResponse initiatePayment(PaymentInitiateRequest req) {
@@ -91,6 +93,7 @@ public class PaymentServiceImpl implements PaymentService {
 			payment.setPaymentStatus(PaymentStatus.SUCCESS);
 			payment.setCompletedAt(LocalDateTime.now());
 			payment = paymentRepository.save(payment);
+			paymentEventPublisher.publishPaymentSuccessEvent(payment);
 		}
 
 		return paymentMapper.toDTO(payment);

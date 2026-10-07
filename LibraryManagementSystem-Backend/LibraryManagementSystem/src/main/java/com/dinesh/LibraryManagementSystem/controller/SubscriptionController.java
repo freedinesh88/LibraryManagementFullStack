@@ -17,6 +17,7 @@ import com.dinesh.LibraryManagementSystem.exception.SubscriptionException;
 import com.dinesh.LibraryManagementSystem.exception.UserException;
 import com.dinesh.LibraryManagementSystem.payload.dto.SubscriptionDTO;
 import com.dinesh.LibraryManagementSystem.payload.response.ApiResponse;
+import com.dinesh.LibraryManagementSystem.payload.response.PaymentInitiateResponse;
 import com.dinesh.LibraryManagementSystem.service.SubscriptionService;
 
 import jakarta.validation.Valid;
@@ -37,7 +38,7 @@ public class SubscriptionController {
             @RequestBody SubscriptionDTO subscription)
             throws Exception, UserException {
 
-        SubscriptionDTO dto = subscriptionService.subscribe(subscription);
+        PaymentInitiateResponse dto = subscriptionService.subscribe(subscription);
 
         return ResponseEntity.ok(dto);
     }

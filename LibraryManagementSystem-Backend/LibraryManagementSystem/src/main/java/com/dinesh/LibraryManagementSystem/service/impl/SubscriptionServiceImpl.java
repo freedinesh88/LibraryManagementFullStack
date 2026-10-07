@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dinesh.LibraryManagementSystem.domain.PaymentType;
 import com.dinesh.LibraryManagementSystem.exception.SubscriptionException;
 import com.dinesh.LibraryManagementSystem.exception.UserException;
 import com.dinesh.LibraryManagementSystem.mapper.SubscriptionMapper;
@@ -16,8 +17,11 @@ import com.dinesh.LibraryManagementSystem.model.Subscription;
 import com.dinesh.LibraryManagementSystem.model.SubscriptionPlan;
 import com.dinesh.LibraryManagementSystem.model.User;
 import com.dinesh.LibraryManagementSystem.payload.dto.SubscriptionDTO;
+import com.dinesh.LibraryManagementSystem.payload.request.PaymentInitiateRequest;
+import com.dinesh.LibraryManagementSystem.payload.response.PaymentInitiateResponse;
 import com.dinesh.LibraryManagementSystem.repository.SubscriptionPlanRepository;
 import com.dinesh.LibraryManagementSystem.repository.SubscriptionRepository;
+import com.dinesh.LibraryManagementSystem.service.PaymentService;
 import com.dinesh.LibraryManagementSystem.service.SubscriptionService;
 import com.dinesh.LibraryManagementSystem.service.UserService;
 
@@ -31,9 +35,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	private final SubscriptionMapper subscriptionMapper;
 	private final UserService userService;
 	private final SubscriptionPlanRepository subscriptionPlanRepository;
+	private final PaymentService paymentService;
 
 	@Override
-	public SubscriptionDTO subscribe(SubscriptionDTO subscriptionDTO) throws UserException, Exception {
+	public PaymentInitiateResponse subscribe(SubscriptionDTO subscriptionDTO) throws UserException, Exception {
 
 		// Get currently logged-in user
 		User user = userService.getCurrentUser();
@@ -51,9 +56,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 		// Save
 		Subscription savedSubscription = subscriptionRepository.save(subscription);
+		PaymentInitiateRequest paymentInitiateRequest= PaymentInitiateRequest.builder()
+				.userId(user.getId())
+				.subscriptionId(subscription.getId())
+				.paymentType(PaymentType.MEMBERSHIP)
+				.build();
 
 		// Return response
-		return subscriptionMapper.toDTO(savedSubscription);
+		return paymentService.initiatePayment(paymentInitiateRequest);
 	}
 
 	@Override

@@ -7,10 +7,11 @@ import org.springframework.data.domain.Pageable;
 import com.dinesh.LibraryManagementSystem.exception.SubscriptionException;
 import com.dinesh.LibraryManagementSystem.exception.UserException;
 import com.dinesh.LibraryManagementSystem.payload.dto.SubscriptionDTO;
+import com.dinesh.LibraryManagementSystem.payload.response.PaymentInitiateResponse;
 
 public interface SubscriptionService {
 
-	SubscriptionDTO subscribe(SubscriptionDTO subscriptionDTO) throws UserException, Exception;
+	PaymentInitiateResponse subscribe(SubscriptionDTO subscriptionDTO) throws UserException, Exception;
 
 	SubscriptionDTO getUserActiveSubscription(Long userId) throws Exception, UserException;
 

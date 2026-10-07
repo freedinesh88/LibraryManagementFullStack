@@ -10,7 +10,7 @@ import com.dinesh.LibraryManagementSystem.model.SubscriptionPlan;
 public interface SubscriptionPlanRepository
         extends JpaRepository<SubscriptionPlan, Long> {
 
-    Optional<SubscriptionPlan> findByPlanCode(String planCode);
+    SubscriptionPlan findByPlanCode(String planCode);
 
     boolean existsByPlanCode(String planCode);
 

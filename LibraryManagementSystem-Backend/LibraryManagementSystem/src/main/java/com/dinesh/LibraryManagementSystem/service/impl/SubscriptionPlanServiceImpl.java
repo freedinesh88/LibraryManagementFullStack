@@ -90,4 +90,14 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
 
 		return plans.stream().map(subscriptionPlanMapper::toDTO).collect(Collectors.toList());
 	}
+
+	@Override
+	public SubscriptionPlan getBySubscriptionPlanCode(String subscriptionPlanCode) throws Exception {
+
+		SubscriptionPlan plan = subscriptionPlanRepository.findByPlanCode(subscriptionPlanCode);
+		if (plan == null) {
+			throw new Exception("plan not found");
+		}
+		return plan;
+	}
 }

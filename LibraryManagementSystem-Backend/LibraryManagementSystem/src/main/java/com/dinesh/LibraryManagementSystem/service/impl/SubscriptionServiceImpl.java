@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dinesh.LibraryManagementSystem.domain.PaymentGateway;
 import com.dinesh.LibraryManagementSystem.domain.PaymentType;
 import com.dinesh.LibraryManagementSystem.exception.SubscriptionException;
 import com.dinesh.LibraryManagementSystem.exception.UserException;
@@ -56,11 +57,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 		// Save
 		Subscription savedSubscription = subscriptionRepository.save(subscription);
-		PaymentInitiateRequest paymentInitiateRequest= PaymentInitiateRequest.builder()
-				.userId(user.getId())
-				.subscriptionId(subscription.getId())
-				.paymentType(PaymentType.MEMBERSHIP)
-				.build();
+		PaymentInitiateRequest paymentInitiateRequest = PaymentInitiateRequest.builder().userId(user.getId())
+				.subscriptionId(subscription.getId()).paymentType(PaymentType.MEMBERSHIP)
+				.gateway(PaymentGateway.RAZORPAY).amount(subscription.getPrice())
+				.description("Library subscription" + plan.getPlanName()).build();
 
 		// Return response
 		return paymentService.initiatePayment(paymentInitiateRequest);

@@ -28,6 +28,7 @@ public class BookLoanDTO {
 	private String bookAuthor;
 	private String bookCoverImage;
 	private BookLoanType type;
+	private Integer overdueDays;
 	private BookLoanStatus status;
 	private LocalDate checkoutDate;
 	private LocalDate dueDate;

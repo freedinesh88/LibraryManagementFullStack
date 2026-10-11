@@ -1,5 +1,5 @@
 package com.dinesh.LibraryManagementSystem.domain;
 
 public enum BookLoanStatus {
-	RETURNED, OVERDUE, LOST, DAMAGED, CHECKOUT 
+	RETURNED, OVERDUE, LOST, DAMAGED, CHECK_OUT 
 }

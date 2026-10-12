@@ -1,0 +1,6 @@
+package com.dinesh.LibraryManagementSystem.domain;
+
+public enum FineStatus {
+	PENDING, PARTIALLY_PAID, PAID, WAIVED
+
+}

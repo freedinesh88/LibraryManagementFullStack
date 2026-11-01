@@ -24,6 +24,10 @@ public class FineDTO {
 
 	private Long id;
 
+	private String waiverReason;
+
+	private LocalDateTime paidAt;
+
 	@NotNull(message = "Book Loan id is mandetory")
 	private Long bookLoanId;
 

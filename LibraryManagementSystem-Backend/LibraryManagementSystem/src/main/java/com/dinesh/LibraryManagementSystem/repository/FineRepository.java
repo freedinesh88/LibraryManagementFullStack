@@ -1,5 +1,7 @@
 package com.dinesh.LibraryManagementSystem.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +23,8 @@ public interface FineRepository extends JpaRepository<Fine, Long> {
 			""")
 	Page<Fine> findAllWithFilters(@Param("userId") Long userId, @Param("status") FineStatus status,
 			@Param("type") FineType type, Pageable pageable);
+
+	List<Fine> findByUserId(Long userId);
+
+	List<Fine> findByUserIdAndType(Long userId, FineType type);
 }

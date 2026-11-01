@@ -43,10 +43,11 @@ public class Fine {
 	@JoinColumn(nullable = false)
 	private User user;
 
-	private FineType fineType;
+	private FineType type;
 
 	@Column(nullable = false)
 	private Long amount;
+	private LocalDateTime waivedAt;
 
 	private FineStatus status;
 
@@ -54,7 +55,7 @@ public class Fine {
 	private String reason;
 
 	@Column(length = 1000)
-	private String note;
+	private String notes;
 
 	@ManyToOne
 	private User waivedBy;
@@ -79,5 +80,20 @@ public class Fine {
 	@Column(nullable = false)
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
+
+	public void applyPayment(Long paymentAmount) {
+		if (paymentAmount == null || paymentAmount == 0) {
+			throw new IllegalArgumentException("Payment amount must be positive");
+		}
+		this.status = FineStatus.PAID;
+		this.paidAt = LocalDateTime.now();
+	}
+	
+	public void waive(User admin,String reason) {
+		this.status=FineStatus.WAIVED;
+		this.waivedBy=admin;
+		this.waivedAt=LocalDateTime.now();
+		this.waiverReason=reason;
+	}
 
 }

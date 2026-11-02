@@ -8,15 +8,15 @@ import com.dinesh.LibraryManagementSystem.payload.response.PageResponse;
 
 public interface ReservationService {
 
-	ReservationDTO createReservation(ReservationRequest reservationRequest);
+	ReservationDTO createReservation(ReservationRequest reservationRequest) throws UserException, Exception;
 
 	ReservationDTO createReservationForUser(ReservationRequest reservationRequest, Long userId) throws Exception, UserException;
 	
-	ReservationDTO cancelReservation(Long reservationId);
+	ReservationDTO cancelReservation(Long reservationId) throws Exception, UserException;
 	
-	ReservationDTO fulfilReservation(Long reservationId);
+	ReservationDTO fulfilReservation(Long reservationId) throws Exception, UserException;
 	
-	PageResponse<ReservationDTO> getMyReservation(ReservationSearchRequest searchRequest);
+	PageResponse<ReservationDTO> getMyReservation(ReservationSearchRequest searchRequest) throws UserException;
 	
 	PageResponse<ReservationDTO> searchReservation(ReservationSearchRequest searchRequest);
 

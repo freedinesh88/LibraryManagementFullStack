@@ -9,6 +9,8 @@ import com.dinesh.LibraryManagementSystem.domain.ReservationStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,7 +36,8 @@ public class Reservation {
 
 	@ManyToOne
 	private Book book;
-
+	
+	@Enumerated(EnumType.STRING)
 	private ReservationStatus status = ReservationStatus.PENDING;
 
 	private LocalDateTime reservedAt;

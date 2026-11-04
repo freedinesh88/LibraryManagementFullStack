@@ -50,10 +50,11 @@ public class WishListServiceImpl implements WishListService {
 	@Override
 	public void removeFromWishList(Long bookId) throws UserException, Exception {
 		User user = userService.getCurrentUser();
-		if (!wishListRepository.existsByUserIdAndBookId(user.getId(), bookId)) {
+		WishList wishList = wishListRepository.findByUserIdAndBookId(user.getId(), bookId);
+		if (wishList==null) {
 			throw new Exception("Book is not in your wishlist");
 		}
-		wishListRepository.deleteByUserIdAndBookId(user.getId(), bookId);
+		wishListRepository.delete(wishList);
 
 	}
 

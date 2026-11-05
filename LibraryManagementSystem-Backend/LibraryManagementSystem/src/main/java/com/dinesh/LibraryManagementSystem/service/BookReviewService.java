@@ -10,10 +10,10 @@ public interface BookReviewService {
 
 	BookReviewDTO createReview(CreateReviewRequest request) throws UserException, Exception;
 
-	BookReviewDTO updateReview(Long reviewId, UpdateReviewRequest request);
+	BookReviewDTO updateReview(Long reviewId, UpdateReviewRequest request) throws UserException, Exception;
 
-	void deleteReview(Long reviewId);
+	void deleteReview(Long reviewId) throws UserException, Exception;
 
-	PageResponse<BookReviewDTO> getReviewsByBookId(Long id, int page, int size);
+	PageResponse<BookReviewDTO> getReviewsByBookId(Long id, int page, int size) throws Exception;
 
 }

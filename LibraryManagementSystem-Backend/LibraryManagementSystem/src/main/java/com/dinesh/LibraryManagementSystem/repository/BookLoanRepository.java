@@ -23,6 +23,8 @@ public interface BookLoanRepository extends JpaRepository<BookLoan, Long> {
 	Page<BookLoan> findByBookId(Long bookId, Pageable pageable);
 
 	Page<BookLoan> findByStatusAndUser(BookLoanStatus status, User user, Pageable pageable);
+	
+	Page<BookLoan> findByBookId(Long bookId);
 
 	@Query("SELECT CASE WHEN COUNT(bl) > 0 THEN TRUE ELSE FALSE END FROM BookLoan bl "
 			+ "WHERE bl.user.id = :userId AND bl.book.id = :bookId "
